@@ -1,4 +1,3 @@
-from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
@@ -28,14 +27,13 @@ class appUsageData(models.Model):
 
 
 class studentAudio(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     audio = models.FileField(upload_to='audio/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.audio.name
-
 
 
 class studentFeeling(models.Model):
@@ -47,4 +45,3 @@ class studentFeeling(models.Model):
 
     def __str__(self):
         return self.feeling
-        
