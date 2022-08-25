@@ -5,23 +5,24 @@ from .views import *
 
 urlpatterns = [
     path('student/',
-        StudentDataView.as_view(),
-        name='student view'),
+         StudentDataView.as_view(),
+         name='student view'),
     path('appusage/',
-        AppUsageDataView.as_view(),
-        name='appusage view'),
+         AppUsageDataView.as_view(),
+         name='appusage view'),
     path('audio/',
-        StudentAudioView.as_view(),
-        name='audio view'),
+         StudentAudioView.as_view(),
+         name='audio view'),
     path('student/<str:pk>/',
-        studentInstanceview.as_view(),
-        name='student view'),
+         studentInstanceview.as_view(),
+         name='student view'),
     path('appusage/<str:pk>/',
-        appUsageInstanceview.as_view(),
-        name='appusage view'),
+         appUsageInstanceview.as_view(),
+         name='appusage view'),
     path('audio/<str:pk>/',
-        studentAudioInstanceview.as_view(),
-        name='audio view'),
+         studentAudioInstanceview.as_view(),
+         name='audio view'),
+    path('feeling/', Feeling.as_view(), name="feeling"),
     
-    
+
 ]
