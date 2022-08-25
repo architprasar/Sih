@@ -172,5 +172,4 @@ DEFAULT_FROM_EMAIL = 'security@concric.com'
 
 
 FRONT_END_LINK = 'https://concric.com/'
-=======
->>>>>>> 8853146769990a6ffe3cb28e4abd284791e0efb1
+
