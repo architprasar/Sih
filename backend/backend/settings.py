@@ -42,8 +42,30 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'student',
+    'parent'
 
 ]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+#CORS_ORIGIN_WHITELIST = ["*"]
+
+CORS_ALLOW_HEADERS = ["accept",
+                      "accept-encoding",
+                      "authorization",
+                      "content-type",
+                      "dnt",
+                      "origin",
+                      "user-agent",
+                      "x-csrftoken",
+                      "x-requested-with",
+                      ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -137,6 +159,7 @@ REST_FRAMEWORK = {
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+<<<<<<< HEAD
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -149,3 +172,5 @@ DEFAULT_FROM_EMAIL = 'security@concric.com'
 
 
 FRONT_END_LINK = 'https://concric.com/'
+=======
+>>>>>>> 8853146769990a6ffe3cb28e4abd284791e0efb1

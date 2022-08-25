@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..student.models import student
+from student.models import student
 
 # Create your models here.
 

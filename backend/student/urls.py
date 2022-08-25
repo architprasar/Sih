@@ -22,7 +22,12 @@ urlpatterns = [
     path('audio/<str:pk>/',
          studentAudioInstanceview.as_view(),
          name='audio view'),
+
     path('feeling/', Feeling.as_view(), name="feeling"),
-    
+
+
+    path("feeling/student/", studentFeelingview.as_view(), name="feeling"),
+
+
 
 ]

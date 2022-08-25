@@ -50,3 +50,19 @@ class studentaudioser(serializers.Serializer):
         instance.audio = validated_data.get('audio', instance.audio)
         instance.save()
         return instance
+
+
+class studentFeelingSer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    feeling = serializers.CharField(max_length=100)
+    date = serializers.DateField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        return studentFeeling.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.feeling = validated_data.get('feeling', instance.feeling)
+        instance.save()
+        return instance

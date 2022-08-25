@@ -9,9 +9,12 @@ from rest_framework.views import APIView
 from api.serializers import CreateUserSerializer
 from .serializers import *
 from .models import *
-
+import base64
+from django.utils import timezone
+from django.core.files.base import ContentFile
 
 # Create your views here.
+
 
 class StudentDataView(APIView):
     permission_classes = [IsAuthenticated]
@@ -52,13 +55,20 @@ class AppUsageDataView(APIView):
 
 
 class StudentAudioView(APIView):
-    permission_classes = [IsAuthenticated]
+
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-        data = request.data
-        audio = data['audio']
+        print(request.data['audio'])
+        data = request.data['audio']
+
+        data = ContentFile(base64.b64decode(data),
+                           name='temp'+str(timezone.now())+'.' + 'wav')
+        print(data)
         user = request.user
+
         instance = studentAudio.objects.create(audio=audio, user=user)
+
         return Response(status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):
@@ -94,6 +104,9 @@ class studentAudioInstanceview(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+
+
 class Feeling(APIView):
 
     def post(self, request):
@@ -113,3 +126,19 @@ class Feeling(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class studentFeelingview(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data = request.data
+        feeling = data['feeling']
+        user = request.user
+        instance = studentFeeling.objects.create(feeling=feeling, user=user)
+        return Response(status=status.HTTP_201_CREATED)
+
+    def get(self, request, format=None):
+        instance = studentFeeling.objects.all()
+        serializer = studentFeelingSer(instance, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
