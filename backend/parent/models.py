@@ -22,4 +22,4 @@ class Task(models.Model):
     start = models.TimeField()
     end = models.TimeField()
     status = models.BooleanField()
-    reward = models.CharField(max_field=100)
+    reward = models.CharField(max_length=100)
