@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from django.contrib.auth import get_user_model
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -12,7 +13,13 @@ from .models import *
 import base64
 from django.utils import timezone
 from django.core.files.base import ContentFile
-
+from tensorflow import keras
+import librosa
+import IPython.display as ipd
+from keras.models import model_from_json
+import numpy as np
+import pickle
+import pandas as pd
 # Create your views here.
 
 
@@ -59,17 +66,83 @@ class StudentAudioView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-        print(request.data['audio'])
-        data = request.data['audio']
-
-        data = ContentFile(base64.b64decode(data),
-                           name='temp'+str(timezone.now())+'.' + 'wav')
-        print(data)
+        data = request.data
         user = request.user
+        audio = data['audio']
 
-        instance = studentAudio.objects.create(audio=audio, user=user)
+        user = request.user
+        aud = audio.split('base64,')[1]
+        name = 'temp'+str(audio[5:10])+'.' + 'wav'
+        ta = ContentFile(base64.b64decode(aud),
+                         name=name)
+        instance = studentAudio.objects.create(
+            audio=ta
+        )
 
-        return Response(status=status.HTTP_201_CREATED)
+        json_file = open(
+            'C:/Users/91788/Desktop/pro2/backend/media/audio/model_json.json', 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        loaded_model = model_from_json(loaded_model_json)
+        newData, newSR = librosa.load(
+            "media/audio/"+name, duration=2.5, sr=44100, offset=0.5)
+
+        newSR = np.array(newSR)
+        mfccs = np.mean(librosa.feature.mfcc(
+            y=newData, sr=newSR, n_mfcc=13), axis=0)
+        newdf = pd.DataFrame(data=mfccs).T
+        newdf = np.expand_dims(newdf, axis=2)
+
+        print(newdf.shape)
+        new = loaded_model.predict(newdf)
+        print(new)
+        filename = 'media/audio/labels'
+
+        infile = open(filename, 'rb')
+        lb = pickle.load(infile)
+        infile.close()
+
+# Get the final predicted label
+        final = new.argmax(axis=1)
+        final = final.astype(int).flatten()
+        final = (lb.inverse_transform((final)))
+        if final == "female_surprise":
+            final = "surprise"
+        elif final == "female_happy":
+            final = "happy"
+        elif final == "female_neutral":
+            final = "neutral"
+        elif final == "female_sad":
+            final = "sad"
+        elif final == "female_angry":
+            final = "angry"
+        elif final == "female_fear":
+            final = "fear"
+        elif final == "female_disgust":
+            final = "disgust"
+        elif final == "male_surprise":
+            final = "surprise"
+        elif final == "male_happy":
+            final = "happy"
+        elif final == "male_neutral":
+            final = "neutral"
+        elif final == "male_sad":
+            final = "sad"
+        elif final == "male_angry":
+            final = "angry"
+        elif final == "male_fear":
+            final = "fear"
+        elif final == "male_disgust":
+            final = "disgust"
+        print(final)
+
+        # model = keras.models.load_model(
+        #     'C:/Users/91788/Desktop/pro2/backend/media/audio/Emotion_Model2.h5')
+        # y_pred = model.predict(
+        #     "C:/Users/91788/Desktop/pro2/backend/media/audio/"+name, batch_size=1, verbose=1)
+        # print(y_pred)
+        # print(model.summary())
+        return Response(data={"final": final}, status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):
         instance = studentAudio.objects.all()
@@ -102,9 +175,6 @@ class studentAudioInstanceview(APIView):
         instance = studentAudio.objects.filter(id=pk).first()
         serializer = studentaudioser(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
 
 
 class Feeling(APIView):

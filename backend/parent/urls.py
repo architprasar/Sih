@@ -9,6 +9,9 @@ urlpatterns = [
          name='create parent'),
     path('add/task/', TaskView, name="add task "),
     path('task/<int:pk>', TaskInstanceView, name="task instance view"),
+    path('task/action/<int:pk>', TaskInstanceView, name="task instance view"),
+    path('task/student/', TaskStudentView, name="task student view"),
+
 
 
 

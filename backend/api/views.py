@@ -63,3 +63,12 @@ class Login(APIView):
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         return Response(data={"msg": "invalid credentials"}, status=status.HTTP_404_NOT_FOUND)
+class ReturnProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        instance = User.objects.filter(username=user).first()
+        print(user.username)
+
+        return Response(data={"name": instance.first_name, "last_name": instance.last_name, "email": instance.email}, status=status.HTTP_200_OK)
